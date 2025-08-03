@@ -1,0 +1,11 @@
+# Read about fixtures at https://api.rubyonrails.org/classes/ActiveRecord/FixtureSet.html
+
+one:
+  user: one
+  earn_point: 1
+  event: one
+
+two:
+  user: two
+  earn_point: 1
+  event: two

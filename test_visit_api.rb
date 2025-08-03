@@ -41,5 +41,3 @@ step = 500 # 스레드 수 증가 단위
   elapsed = Time.now - start_time
   puts "Elapsed time for #{thread_count} threads: #{elapsed.round(2)} seconds"
 end
-
-# 494

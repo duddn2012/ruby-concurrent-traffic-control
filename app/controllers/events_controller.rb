@@ -17,43 +17,20 @@ class EventsController < ApplicationController
   def create
     user = User.find(params[:user_id])
 
-    ApplicationRecord.transaction do
-      next_count = VisitCounterRedis.next_count
+    next_count = VisitCounterRedis.next_count
 
-      @gift_point = 100
-      @winning_order_number = 100
+    @gift_point = 100
+    @winning_order_number = 100
+    win_status = next_count % @winning_order_number == 0
 
-      win_status = next_count % @winning_order_number == 0
+    EventAsyncHandlerJob.perform_later(
+      user.id,
+      next_count,
+      win_status,
+      @gift_point
+    )
 
-      @new_event = Event.new(
-        visit_count: next_count,
-        user: user,
-        win_status: win_status
-      )
-
-      unless @new_event.save
-        raise ActiveRecord::Rollback
-      end
-
-      if @new_event.win_status
-        unless user.update(point: user.point + @gift_point)
-          raise ActiveRecord::Rollback
-        end
-
-        UserPointHistory.create!(
-          user: user,
-          earn_point: @gift_point,
-          event: @new_event
-        )
-      end
-    end
-
-    # 트랜잭션 밖에서 응답 처리
-    if @new_event.persisted?
-      render json: @new_event, status: :created, location: @new_event
-    else
-      render json: @new_event.errors, status: :unprocessable_entity
-    end
+    render json: { win_status: win_status }, status: :ok
   end
 
   # PATCH/PUT /events/1

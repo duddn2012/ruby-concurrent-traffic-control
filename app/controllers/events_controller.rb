@@ -18,7 +18,7 @@ class EventsController < ApplicationController
     user = User.find(params[:user_id])
 
     ApplicationRecord.transaction do
-      next_count = VisitCounter.next_count
+      next_count = VisitCounterRedis.next_count
 
       @gift_point = 100
       @winning_order_number = 100
@@ -73,11 +73,11 @@ class EventsController < ApplicationController
   private
     # Use callbacks to share common setup or constraints between actions.
     def set_event
-      @event = Event.find(params.expect(:id))
+      @event = Event.find(params.require(:id))
     end
 
     # Only allow a list of trusted parameters through.
     def event_params
-      params.expect(event: [ :user_id, :visit_count, :win_status ])
+      params.require(event: [ :user_id, :visit_count, :win_status ])
     end
 end

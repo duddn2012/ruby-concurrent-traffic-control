@@ -1,4 +1,4 @@
-class VisitCounter
+class VisitCounterMutex
   @count = 0
   @mutex = Mutex.new
 

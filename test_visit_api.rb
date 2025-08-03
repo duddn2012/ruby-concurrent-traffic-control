@@ -24,6 +24,12 @@ step = 500 # 스레드 수 증가 단위
 
       begin
         response = http.request(request)
+
+        if response.is_a?(Net::HTTPSuccess)
+
+        else
+          puts "Thread ##{i + 1}: Failed - #{response.code} #{response.message} | Body: #{response.body}"
+        end
       rescue => e
         puts "Threads ##{i+1}: Error - #{e.message}"
       end
@@ -35,3 +41,5 @@ step = 500 # 스레드 수 증가 단위
   elapsed = Time.now - start_time
   puts "Elapsed time for #{thread_count} threads: #{elapsed.round(2)} seconds"
 end
+
+# 494
